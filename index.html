@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!-- 2/3 · ИГРАТА (Telegram Mini App) · качи в GitHub Pages като index.html -->
+<html lang="bg"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Lucky Spin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+:root{--g:#ffc83d;--m:#b9b2dc}
+[hidden]{display:none!important}
+body{font:15px/1.4 system-ui,-apple-system,sans-serif;color:#fff;min-height:100vh;padding:calc(env(safe-area-inset-top) + 10px) 14px 104px;background:radial-gradient(120% 70% at 50% -10%,#4a1fb8,#120a2e 62%) fixed}
+.glass,.box{background:#ffffff14;border:1px solid #ffffff26;border-radius:22px;backdrop-filter:blur(10px)}
+.box{padding:14px;margin-bottom:12px;display:grid;gap:8px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.top img{width:42px;height:42px;border-radius:50%;background:#ffffff30;object-fit:cover}
+.m{color:var(--m);font-size:12px}
+.st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.st div{padding:8px 4px;text-align:center;font-weight:800}
+.st small{display:block;font-weight:500;color:var(--m);font-size:11px}
+section{display:none}section.on{display:block}
+.mach{padding:18px;text-align:center;border:2px solid #ffc83d77;background:linear-gradient(160deg,#5b33d6aa,#1c1050cc);box-shadow:0 0 40px #7c4dff66}
+.reels{display:flex;gap:10px;padding:12px;border-radius:20px;background:#0b0620;box-shadow:inset 0 0 18px #000}
+.reels div{flex:1;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(40px,14vw,64px);border-radius:16px;background:linear-gradient(#fff,#e6dfff 50%,#fff)}
+.reels .go{animation:sh .12s linear infinite;filter:blur(1.5px)}
+@keyframes sh{50%{transform:translateY(7px)}}
+.win{height:34px;margin:12px 0 4px;font-size:22px;font-weight:800;color:var(--g);text-shadow:0 0 14px #ffc83d88}
+.bets{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+.chip{padding:8px 14px;border-radius:99px;border:1px solid #ffffff40;background:#ffffff14;color:#fff;font:700 14px system-ui}
+.chip.on{background:var(--g);color:#2a1a00;border-color:var(--g)}
+.big,.btn{display:block;width:100%;border:0;border-radius:16px;font:800 16px system-ui;color:#2a1a00;text-align:center;text-decoration:none;padding:14px;background:linear-gradient(#ffe27a,#ffb300);box-shadow:0 6px 0 #b26a00,0 10px 24px #ffb30055}
+.big{font-size:22px;padding:16px;letter-spacing:1px;animation:pl 1.6s infinite}
+@keyframes pl{50%{transform:scale(1.03)}}
+.big:active,.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #b26a00}
+.btn:disabled{filter:grayscale(1);opacity:.6}
+.album{padding:14px;margin-bottom:12px}
+.album h3{display:flex;justify-content:space-between;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.cd{aspect-ratio:3/4;display:grid;place-items:center;font-size:40px;border-radius:14px;background:#ffffff10;border:1px dashed #ffffff40;color:#ffffff55}
+.cd.on{background:linear-gradient(160deg,#ffe27a,#ff8a3d);border:2px solid #fff;color:#000;box-shadow:0 0 18px #ffb30088}
+.packs{display:grid;gap:8px;margin:10px 0}
+.pack{display:flex;justify-content:space-between;padding:16px;font-weight:800;font-size:17px}
+.pack.on{outline:2px solid var(--g)}
+h3{margin-bottom:2px}
+input{font:inherit;padding:12px;border-radius:12px;border:1px solid #ffffff30;background:#0b062088;color:#fff;width:100%}
+code{word-break:break-all;background:#0006;padding:8px;border-radius:10px;font-size:13px}
+.tog{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+nav{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 10px);display:flex;padding:6px;border-radius:24px;background:#1a1040ee;border:1px solid #ffffff26}
+nav button{flex:1;border:0;background:0;color:var(--m);font-size:22px;padding:6px;border-radius:18px}
+nav small{display:block;font-size:11px}nav .on{background:#ffffff1f;color:#fff}
+.fx{position:fixed;top:-30px;font-size:26px;pointer-events:none;z-index:9;animation:fall 1.7s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media(prefers-reduced-motion:reduce){.big,.reels .go{animation:none}}
+</style></head><body>
+<div class=top><img id=av alt=""><div><b id=nm>…</b><div class=m>Lucky Spin</div></div></div>
+<div class=st><div class=glass><small>Монети</small>🪙 <span id=c>0</span></div><div class=glass><small>Спинове</small>🎟 <span id=s>0</span></div><div class=glass><small>Баланс</small>💵 <span id=b>0</span></div></div>
+
+<section id=s0 class=on><div class="glass mach">
+ <div class=reels><div id=r0>🪙</div><div id=r1>💎</div><div id=r2>👑</div></div>
+ <div class=win id=win>Натисни и печели!</div>
+ <div class=bets id=bets></div>
+ <button class=big onclick=spin()>КРЪТНИ</button>
+ <p class=m style="margin-top:12px">1000 безплатни спина всеки ден · залог x5/x10/x50 умножава печалбата</p>
+</div></section>
+
+<section id=s1><p class=m style="margin-bottom:10px">Купувай карти с монети. Събери и 9-те от албума и вземи награда в реални пари!</p><div id=albums></div></section>
+
+<section id=s2><div class=box><h3>🎟 Купи спинове с крипто</h3><div class=packs id=packs></div>
+ <div id=pay class=box hidden><p>1. Изпрати точната сума на адрес:</p><code id=wal></code><p>2. Постави TXID (хеш) на плащането:</p><input id=tx placeholder="TXID"><button class=btn onclick=order()>Изпратих плащането</button><p class=m>Спиновете се добавят след потвърждение на плащането.</p></div></div></section>
+
+<section id=s3>
+ <div class=box><h3>💵 Баланс: <span id=bal></span></h3><input id=wa placeholder="USDT адрес за теглене"><input id=am type=number step=.01 placeholder="Сума в $"><button class=btn onclick=wd()>Изтегли</button><p class=m id=minw></p></div>
+ <div class=box><h3>👥 Покани приятели</h3><p class=m id=rs></p><p class=m>Какво получаваш за всеки приятел?</p><div class=tog id=tog></div><input id=lnk readonly><button class=btn onclick=share()>Сподели линка</button></div>
+ <a id=adm class=btn hidden href=admin.html>⚙️ Админ панел</a>
+</section>
+
+<nav><button class=on onclick=show(0)>🎰<small>Игра</small></button><button onclick=show(1)>🃏<small>Карти</small></button><button onclick=show(2)>💎<small>Спинове</small></button><button onclick=show(3)>👤<small>Профил</small></button></nav>
+
+<script>
+const U='https://gdsvghjuzqljtynevyqk.supabase.co',K='sb_publishable_tK6JDlCLJPsIo6hTx5JuzA_F_J9fey7';
+const LINK='https://t.me/YOUR_BOT/YOUR_APP'; // ← смени с линка на твоето Mini App (от BotFather)
+const tg=Telegram.WebApp,$=i=>document.getElementById(i),S=['🪙','💰','💎','⭐','👑'];
+let T,D,bet=1,sel=-1,busy=0;
+const f=n=>n>=1e6?+(n/1e6).toFixed(2)+'M':n>=1e4?+(n/1e3).toFixed(1)+'K':(+n).toLocaleString('bg');
+const api=async(fn,a)=>{const r=await fetch(U+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify(a)}),j=await r.json();if(!r.ok)throw Error(j.message||'Грешка');return j};
+const act=async(fn,a={})=>{try{D=await api(fn,{t:T,...a});render();return D.x||{}}catch(e){tg.showAlert(e.message)}};
+const show=i=>{document.querySelectorAll('section').forEach((e,j)=>e.classList.toggle('on',i==j));document.querySelectorAll('nav button').forEach((e,j)=>e.classList.toggle('on',i==j))};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function rain(){for(let i=0;i<16;i++){const e=document.createElement('span');e.className='fx';e.textContent='🪙';e.style.cssText=`left:${Math.random()*100}vw;animation-delay:${Math.random()*.5}s`;document.body.append(e);setTimeout(()=>e.remove(),2300)}}
+
+function render(){const u=D.u,c=D.cfg,P=JSON.parse(c.packs),$$=n=>'$'+(+n).toFixed(2);
+ $('nm').textContent=u.name;if(u.photo)$('av').src=u.photo;
+ $('c').textContent=f(u.coins);$('s').textContent=f(u.spins);$('b').textContent=$$(u.balance);$('bal').textContent=$$(u.balance);
+ $('bets').innerHTML=[1,5,10,50].map(n=>`<button class="chip ${n==bet?'on':''}" onclick="bet=${n};render()">x${n}</button>`).join('');
+ $('albums').innerHTML=D.albums.map(a=>{const k=a.own.length;return`<div class="glass album"><h3>${a.name}<span>🏆 $${a.reward}</span></h3><div class=grid>${a.cards.map((e,i)=>`<div class="cd ${a.own.includes(i+1)?'on':''}">${a.own.includes(i+1)?e:'?'}</div>`).join('')}</div><button class=btn ${k>8?'disabled':''} onclick="buy(${a.id})">${k>8?'✅ Албумът е завършен':`Купи карта · ${f(c.card_price)} 🪙 (${k}/9)`}</button></div>`}).join('');
+ $('packs').innerHTML=P.map((p,i)=>`<div class="glass pack ${i==sel?'on':''}" onclick="sel=${i};render();$('pay').hidden=0"><span>🎟 ${f(p.spins)} спина</span><span>$${p.usd}</span></div>`).join('');
+ $('wal').textContent=c.wallet;$('minw').textContent='Минимално теглене: $'+c.min_withdraw;
+ $('rs').textContent=`Приятели: ${u.refs} · Спечелени от тях: ${$$(u.earned)}`;
+ $('tog').innerHTML=[['coins','🎁 '+f(c.ref_coins)+' монети подарък'],['cash','💵 '+c.ref_pct.split(',').join('% / ')+'% от покупките им']].map(([m,t])=>`<button class="chip ${u.mode==m?'on':''}" onclick="act('set_mode',{m:'${m}'})">${t}</button>`).join('');
+ $('lnk').value=LINK+'?startapp=ref_'+u.id;$('adm').hidden=!u.admin}
+
+async function spin(){if(busy)return;busy=1;
+ const R=[0,1,2].map(i=>$('r'+i)),t=setInterval(()=>R.forEach(r=>r.textContent=S[Math.random()*5|0]),80);
+ R.forEach(r=>r.classList.add('go'));$('win').textContent='';tg.HapticFeedback?.impactOccurred('medium');
+ let x;try{[x]=await Promise.all([api('spin',{t:T,n:bet}),sleep(900)])}catch(e){tg.showAlert(e.message)}
+ clearInterval(t);
+ for(let i=0;i<3;i++){if(x)await sleep(260);R[i].classList.remove('go');if(x)R[i].textContent=S[x.x.reels[i]]}
+ if(x){D=x;render();const w=x.x.win,jp=new Set(x.x.reels).size==1;$('win').textContent=(jp?'🎉 ДЖАКПОТ! ':'')+'+'+f(w)+' 🪙';tg.HapticFeedback?.notificationOccurred('success');if(jp)rain()}
+ busy=0}
+
+const buy=async id=>{const x=await act('buy_card',{p_album:id});if(!x)return;if(x.done){tg.showAlert('🏆 Албумът е завършен! +$'+x.reward);rain()}else tg.HapticFeedback?.notificationOccurred('success')};
+const order=async()=>{if(sel<0)return;const x=await act('order_spins',{p_pack:sel,p_txid:$('tx').value});if(x){$('tx').value='';$('pay').hidden=1;tg.showAlert('Заявката е изпратена ✅ Спиновете се добавят след потвърждение на плащането.')}};
+const wd=async()=>{const x=await act('withdraw',{p_usd:+$('am').value,p_wallet:$('wa').value});if(x)tg.showAlert('Заявката за теглене е изпратена ✅')};
+const share=()=>tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent($('lnk').value)+'&text='+encodeURIComponent('🎰 Влез в играта – 1000 безплатни спина всеки ден и награди в истински пари!'));
+
+(async()=>{tg.ready();tg.expand();try{tg.setHeaderColor('#120a2e');tg.setBackgroundColor('#120a2e')}catch{}
+ try{if(!tg.initData)throw Error('Отвори играта през Telegram бота');
+  const p=new URLSearchParams(tg.initData),h=p.get('hash');p.delete('hash');
+  D=await api('login',{p_check:[...p].map(([k,v])=>k+'='+v).sort().join('\n'),p_hash:h});T=D.x.token;render()
+ }catch(e){document.body.textContent='⛔ '+e.message}})();
+</script></body></html>

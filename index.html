@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 2/4 · ИГРАТА (Telegram Mini App) · качи в GitHub като index.html -->
+<!-- 2/3 · ИГРАТА (Telegram Mini App) · качи в GitHub като index.html -->
 <html lang="bg"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Crypto Queen</title>
@@ -196,11 +196,9 @@ async function spin(){if(busy)return;busy=1;
 
 const buy=async id=>{const x=await act('buy_card',{p_album:id});if(!x)return;if(x.done){tg.showAlert('Албумът е завършен! Наградата е в баланса ти: $'+x.reward);rain()}else tg.HapticFeedback?.notificationOccurred('success')};
 const order=async()=>{if(sel<0)return;const x=await act('order_spins',{p_pack:sel,p_txid:$('tx').value});if(x){$('tx').value='';$('pay').hidden=1;tg.showAlert('Заявката е изпратена. Спиновете се добавят след потвърждение на плащането.')}};
-async function stars(){try{
- const r=await fetch(U+'/functions/v1/bot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({a:'invoice',t:T,pack:sel})}),j=await r.json();
- if(!j.link)throw Error(j.error||j.message||'Плащането със Stars още не е настроено');
- tg.openInvoice(j.link,async s=>{if(s=='paid'){tg.showAlert('Плащането е прието. Спиновете се добавят след секунди.');for(const ms of[1500,3500]){await sleep(ms);await act('state')}}})
-}catch(e){tg.showAlert(e.message)}}
+async function stars(){
+ const x=await act('stars_link',{p_pack:sel});if(!x||!x.link)return;
+ tg.openInvoice(x.link,async s=>{if(s=='paid'){tg.showAlert('Плащането е прието. Спиновете се добавят след секунди.');for(const ms of[1500,3500]){await sleep(ms);await act('state')}}})}
 const wd=async()=>{const x=await act('withdraw',{p_usd:+$('am').value,p_wallet:$('wa').value});if(x)tg.showAlert('Заявката за теглене е изпратена.')};
 const share=()=>tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent($('lnk').value)+'&text='+encodeURIComponent('Влез в Crypto Queen: 1000 безплатни спина всеки ден и награди в истински пари!'));
 
